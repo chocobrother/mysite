@@ -69,7 +69,7 @@ public class UserDao {
 		
 		return result;
 	}
-	
+
 	
 	public boolean insert(UserVo vo) {
 		boolean result = false;
@@ -115,6 +115,110 @@ public class UserDao {
 		
 		return result;
 	}
+	
+	
+public UserVo getName() {
+		
+		
+		UserVo result = null;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		
+		try {
+			conn = getConnection();
+			String sql = "select *from users";
+			pstmt = conn.prepareStatement(sql);
+			
+			
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				result = new UserVo();
+				
+				result.setNo(rs.getLong(1));
+				result.setName(rs.getString(2));
+				result.setEmail(rs.getString(3));
+				result.setPassword(rs.getString(4));
+				result.setGender(rs.getString(5));
+			}
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+				if(conn!=null) {
+					conn.close();
+				}
+				if(rs!=null) {
+					rs.close();
+				}
+				
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+
+
+	
+	
+	
+	public boolean update(UserVo vo) {
+		boolean result = false;
+		
+		Connection conn = null;
+		
+		PreparedStatement pstmt = null;
+		
+		
+		try {
+			conn = getConnection();
+			String sql = "update users " + 
+					" set name = ?," + 
+					"	password = password(?)," + 
+					"    gender = ?" + 
+					"   where email= ?";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, vo.getName());
+			pstmt.setString(2, vo.getPassword());
+			pstmt.setString(3, vo.getGender());
+//			pstmt.setString(4, vo.getEmail());
+			
+			int count = pstmt.executeUpdate();
+			
+			result = (count == 1);
+			
+			
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null) {
+					pstmt.close();
+				}
+				if(conn!=null) {
+					conn.close();
+				}
+				
+			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	
+	
 	
 	
 	private Connection getConnection() throws SQLException {

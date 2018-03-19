@@ -11,18 +11,19 @@
 </head>
 <body>
 	<div id="container">
-		<c:import url ="/WEB-INF/views/includes/header.jsp" />
+				<c:import url ="/WEB-INF/views/includes/header.jsp" />
 		<div id="content">
 			<div id="user">
 
-				<form id="join-form" name="joinForm" method="post" action="/mysite/user">
-					<input type ="hidden" name ="a" value = "join"/> 
+				<form id="modify-form" name="modifyform" method="post" action="/mysite/user">
+					<input type ="hidden" name ="a" value = "modify"/> 
+					<input type ="hidden" name ="no" value = "${sessionScope.authUser.no }"/>
+					<input type = "hidden" name = "email" value = "${sessionScope.authUser.email }"/>
 					<label class="block-label" for="name">이름</label>
-					<input id="name" name="name" type="text" value="">
-
+					<input id="name" name="name" type="text" value="${sessionScope.authUser.name }">
 					<label class="block-label" for="email">이메일</label>
-					<input id="email" name="email" type="text" value="">
-					<input type="button" value="id 중복체크">
+					<input id="email" name="email" type="text" value="${sessionScope.authUser.email }">
+					
 					
 					<label class="block-label">패스워드</label>
 					<input name="password" type="password" value="">
@@ -33,13 +34,7 @@
 						<label>남</label> <input type="radio" name="gender" value="male">
 					</fieldset>
 					
-					<fieldset>
-						<legend>약관동의</legend>
-						<input id="agree-prov" type="checkbox" name="agreeProv" value="y">
-						<label>서비스 약관에 동의합니다.</label>
-					</fieldset>
-					
-					<input type="submit" value="가입하기">
+					<input type="submit" value="변경하기">
 					
 				</form>
 			</div>

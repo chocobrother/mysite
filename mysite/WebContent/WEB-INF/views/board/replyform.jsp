@@ -15,18 +15,18 @@
 		<div id="content">
 			<div id="board">
 				<form class="board-form" method="post" action="/mysite/board">
-					<input type = "hidden" name = "a" value="add">
+				 	<input type = "hidden" name = "a" value="list"> 
 					<input type ="hidden" name ="no" value = "${sessionScope.authUser.no}"/>
 					<table class="tbl-ex">
 						<tr>
-							<th colspan="2">글쓰기</th>
+							<th colspan="2">답글달기</th>
 						</tr>
 						<tr>
-							<td class="label">제목</td>
+							<td class="label">답글제목</td>
 							<td><input type="text" name="title" value="제목을 써주세요"></td>
 						</tr>
 						<tr>
-							<td class="label">내용</td>
+							<td class="label">답글내용</td>
 							<td>
 								<textarea id="content" name="content"></textarea>
 							</td>

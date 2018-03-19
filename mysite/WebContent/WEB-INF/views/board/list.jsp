@@ -1,4 +1,9 @@
+<%@page import="com.cafe24.mysite.dao.BoardDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%> 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,16 +13,7 @@
 </head>
 <body>
 	<div id="container">
-		<div id="header">
-			<h1>MySite</h1>
-			<ul>
-				<li><a href="">로그인</a><li>
-				<li><a href="">회원가입</a><li>
-				<li><a href="">회원정보수정</a><li>
-				<li><a href="">로그아웃</a><li>
-				<li>님 안녕하세요 ^^;</li>
-			</ul>
-		</div>
+		<c:import url ="/WEB-INF/views/includes/header.jsp" />
 		<div id="content">
 			<div id="board">
 				<form id="search_form" action="" method="post">
@@ -25,6 +21,7 @@
 					<input type="submit" value="찾기">
 				</form>
 				<table class="tbl-ex">
+				
 					<tr>
 						<th>번호</th>
 						<th>제목</th>
@@ -32,58 +29,62 @@
 						<th>조회수</th>
 						<th>작성일</th>
 						<th>&nbsp;</th>
-					</tr>				
+					</tr>		
+					
+					<c:forEach items="${list}" var = "vo" varStatus = "status">
+
+					<input type ="hidden" name ="no" value = "${sessionScope.authUser.no }"/>
 					<tr>
-						<td>3</td>
-						<td><a href="">세 번째 글입니다.</a></td>
-						<td>안대혁</td>
-						<td>3</td>
-						<td>2015-10-11 12:04:20</td>
-						<td><a href="" class="del">삭제</a></td>
+						<td>${vo.no}</td>
+						<td  style = "text-align:left; paddig-left:${20*0}">
+						<!-- <img src = "/mysite/assets/images/reply.png"/> -->
+						<a href="/mysite/board?a=view&no=${vo.no}&pg=${requestScope.pg}">${vo.title}</a></td>
+						<td>${vo.user_name }</td>
+						<td>${vo.hit}</td>
+						<td>${vo.write_date}</td>
+						<c:if test = "${not empty authUser && sessionScope.authUser.no == vo.user_no}">
+						<td>
+						<a href="/mysite/board?a=delete&user_no=${sessionScope.authUser.no }&no=${vo.no}" class="del">삭제</a>
+						</td>
+						</c:if>
 					</tr>
+						</c:forEach>
+						
+					<!-- 페이징 -->	
 					<tr>
-						<td>2</td>
-						<td><a href="">두 번째 글입니다.</a></td>
-						<td>안대혁</td>
-						<td>3</td>
-						<td>2015-10-02 12:04:12</td>
-						<td><a href="" class="del">삭제</a></td>
-					</tr>
-					<tr>
-						<td>1</td>
-						<td><a href="">첫 번째 글입니다.</a></td>
-						<td>안대혁</td>
-						<td>3</td>
-						<td>2015-09-25 07:24:32</td>
-						<td><a href="" class="del">삭제</a></td>
-					</tr>
+						<td colspan ="6" align = "center">
+							<c:if test="${requestScope.startPage > 3 }">
+							[<a id = "paging" href = "/mysite/board?pg=${requestScope.startPage -1}">이전</a>]	
+							</c:if>	
+						<c:forEach var="i" begin="${startPage }" end="${endPage }" step="1">
+							<c:if test="${i==pg }">
+								[<a id="currentPaging" href="/mysite/board?pg=${i}">${i}</a>]
+							</c:if>
+							
+							<c:if test="${i!=pg }">
+								[<a id="paging" href="/mysite/board?pg=${i}">${i}</a>]
+							</c:if>
+							</c:forEach>
+							<c:if test="${requestScope.endPage < totalP }">
+								[<a id = "paging"
+								href="/mysite/board?pg=${requestScope.endPage+1 }">다음</a>]
+							</c:if>
+					</td>
+				</tr>
+
 				</table>
-				<div class="pager">
-					<ul>
-						<li><a href="">◀</a></li>
-						<li><a href="">1</a></li>
-						<li><a href="">2</a></li>
-						<li class="selected">3</li>
-						<li><a href="">4</a></li>
-						<li>5</li>
-						<li><a href="">▶</a></li>
-					</ul>
-				</div>				
+			
+				
+				<c:if test = "${sessionScope.authUser.no != vo.user_no }">		
 				<div class="bottom">
-					<a href="" id="new-book">글쓰기</a>
+					<a href="/mysite/board?a=write" id="new-book">글쓰기</a>
 				</div>				
+				</c:if>
 			</div>
+			
 		</div>
-		<div id="navigation">
-			<ul>
-				<li><a href="">안대혁</a></li>
-				<li><a href="">방명록</a></li>
-				<li><a href="">게시판</a></li>
-			</ul>
-		</div>
-		<div id="footer">
-			<p>(c)opyright 2014 </p>
-		</div>
+			<c:import url ="/WEB-INF/views/includes/navigation.jsp" />
+			<c:import url ="/WEB-INF/views/includes/footer.jsp" />
 	</div>
 </body>
 </html>
