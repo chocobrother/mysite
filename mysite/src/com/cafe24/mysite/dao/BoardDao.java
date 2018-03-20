@@ -32,9 +32,9 @@ public class BoardDao {
 			
 			pstmt.setString(1, vo.getTitle());
 			pstmt.setString(2, vo.getContent());
-			pstmt.setString(3,vo.getGroup_no());
-			pstmt.setString(4, vo.getOrder_no());
-			pstmt.setString(5, vo.getDepth());
+			pstmt.setLong(3,vo.getGroup_no());
+			pstmt.setLong(4, vo.getOrder_no());
+			pstmt.setLong(5, vo.getDepth());
 			pstmt.setLong(6, vo.getHit());
 			pstmt.setLong(7, vo.getUser_no());
 
@@ -101,6 +101,46 @@ public class BoardDao {
 		return result;
 	}
 
+	
+	public boolean orderUpdate( BoardVo vo ) {
+		boolean result = false;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			conn = getConnection();
+			
+			String sql = 
+				" update board set order_no = order_no + 1 where group_no = ? ";
+			
+			pstmt = conn.prepareStatement(sql);
+		
+			pstmt.setLong(1, vo.getGroup_no());
+			
+
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if( pstmt != null ) {
+					pstmt.close();
+				}
+				if( conn != null ) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	
+	
 	public boolean delete( BoardVo vo ) {
 		boolean result = false;
 		
@@ -168,12 +208,13 @@ public class BoardDao {
 					"       board.user_no," + 
 					"       users.name" + 
 					" from board, users" + 
-					" where board.user_no = users.no" + 
-					" order by group_no DESC, order_no ASC"+
-					" limit ?, 5";
+					" where board.user_no = users.no" +
+					" group by board.no" +
+					" order by group_no DESC, order_no ASC"+ 
+					" limit ? ,5";
 			pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setInt(1,5*pg-1);
+			pstmt.setInt(1,5*(pg-1));
 			
 			rs = pstmt.executeQuery();
 			
@@ -182,9 +223,9 @@ public class BoardDao {
 				Long no = rs.getLong( 1 );
 				String title = rs.getString(2);
 				String content = rs.getString(3);
-				String group_no = rs.getString(4);
-				String order_no = rs.getString(5);
-				String depth = rs.getString(6);
+				Long group_no = rs.getLong(4);
+				Long order_no = rs.getLong(5);
+				Long depth = rs.getLong(6);
 				Long hit = rs.getLong(7);
 				String write_date = rs.getString(8);
 				Long user_no = rs.getLong(9);
@@ -227,6 +268,89 @@ public class BoardDao {
 	
 		return list;
 	}
+	
+	
+//	public List<BoardVo> getList() {
+//		List<BoardVo> list = 
+//			new ArrayList<BoardVo>();
+//	
+//		Connection conn = null;
+//		PreparedStatement pstmt = null;
+//		ResultSet rs = null;
+//		
+//		try {
+//			conn = getConnection();
+//			
+//			
+//			String sql = "select board.no," + 
+//					"	   board.title," + 
+//					"       board.content," + 
+//					"       board.group_no," + 
+//					"       board.order_no," + 
+//					"       board.depth," + 
+//					"       board.hit," + 
+//					"       board.write_date," + 
+//					"       board.user_no," + 
+//					"       users.name" + 
+//					" from board, users" + 
+//					" where board.user_no = users.no" + 
+//					" order by group_no DESC, order_no ASC";
+//					
+//			pstmt = conn.prepareStatement(sql);
+//			
+//			
+//			rs = pstmt.executeQuery();
+//			
+//			
+//			while( rs.next() ) {
+//				Long no = rs.getLong( 1 );
+//				String title = rs.getString(2);
+//				String content = rs.getString(3);
+//				Long group_no = rs.getLong(4);
+//				Long order_no = rs.getLong(5);
+//				Long depth = rs.getLong(6);
+//				Long hit = rs.getLong(7);
+//				String write_date = rs.getString(8);
+//				Long user_no = rs.getLong(9);
+//				String user_name = rs.getString(10);
+//				
+//				BoardVo vo = new BoardVo();
+//
+//				vo.setNo(no);
+//				vo.setTitle(title);
+//				vo.setContent(content);
+//				vo.setGroup_no(group_no);
+//				vo.setOrder_no(order_no);
+//				vo.setDepth(depth);
+//				vo.setHit(hit);
+//				vo.setWrite_date(write_date);
+//				vo.setUser_no(user_no);
+//				vo.setUser_name(user_name);
+//				//
+//				
+//				list.add( vo );
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			try {
+//				if( rs != null ) {
+//					rs.close();
+//				}
+//				if( pstmt != null ) {
+//					pstmt.close();
+//				}
+//				if( conn != null ) {
+//					conn.close();
+//				}
+//				
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	
+//		return list;
+//	}
 	
 	
 	
@@ -276,6 +400,146 @@ public class BoardDao {
 	}
 	
 	
+	public int maxGroupNo() {
+		List<BoardVo> list = 
+			new ArrayList<BoardVo>();
+	
+		int groupNo = 0;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = getConnection();
+			
+			
+			String sql = "select max(group_no) from board";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			rs.next();
+			groupNo = rs.getInt(1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if( rs != null ) {
+					rs.close();
+				}
+				if( pstmt != null ) {
+					pstmt.close();
+				}
+				if( conn != null ) {
+					conn.close();
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	
+		return groupNo;
+	}
+	
+	public Long maxOrderNo(Long group_no) {
+		List<BoardVo> list = 
+			new ArrayList<BoardVo>();
+	
+		Long groupNo = (long) 0;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = getConnection();
+			
+			
+			String sql = "select max(order_no) from board where group_no = ?";
+			pstmt = conn.prepareStatement(sql);
+			
+			
+			pstmt.setLong(1,group_no);
+			
+			rs = pstmt.executeQuery();
+			
+			rs.next();
+			groupNo =  rs.getLong(1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if( rs != null ) {
+					rs.close();
+				}
+				if( pstmt != null ) {
+					pstmt.close();
+				}
+				if( conn != null ) {
+					conn.close();
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	
+		return groupNo;
+	}
+	
+	
+	public Long maxdepth(Long group_no) {
+		List<BoardVo> list = 
+			new ArrayList<BoardVo>();
+	
+		Long groupNo = (long) 0;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = getConnection();
+			
+			
+			String sql = "select max(depth) from board where group_no = ?";
+			pstmt = conn.prepareStatement(sql);
+			
+			
+			pstmt.setLong(1,group_no);
+			
+			rs = pstmt.executeQuery();
+			
+			rs.next();
+			groupNo =  rs.getLong(1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if( rs != null ) {
+					rs.close();
+				}
+				if( pstmt != null ) {
+					pstmt.close();
+				}
+				if( conn != null ) {
+					conn.close();
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	
+		return groupNo;
+	}
+	
+	
+	
 	
 	
 	
@@ -290,7 +554,7 @@ public class BoardDao {
 		try {
 			conn = getConnection();
 			
-			String sql = "select title, content,user_no from board where no = ?";
+			String sql = "select title, content,user_no,order_no,group_no,depth,user_no from board where no = ?";
 			
 			System.out.println("get no : " + vo.getNo());
 				
@@ -303,14 +567,17 @@ public class BoardDao {
 				
 				String title = rs.getString(1);				
 				
-				System.out.println("title : " + title);
-				
 				String content = rs.getString(2);
 				
 				Long user_no = rs.getLong(3);
 				
-				System.out.println("content : " + content);
+				Long order_no = rs.getLong(4);
 				
+				Long group_no = rs.getLong(5);
+				
+				Long depth = rs.getLong(6);
+				
+//				Long user_no  = rs.getLong(7);
 				
 //				BoardVo vo = new BoardVo();
 
@@ -320,6 +587,10 @@ public class BoardDao {
 				vo.setContent(content);
 				
 				vo.setUser_no(user_no);
+				
+				vo.setGroup_no(group_no);
+				vo.setOrder_no(order_no);
+				vo.setDepth(depth);
 				
 				list.add( vo );
 			}
@@ -386,6 +657,56 @@ public class BoardDao {
 				}
 				
 			}catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	
+	
+	
+	public boolean replyInsert( BoardVo vo ) {
+		boolean result = false;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			conn = getConnection();
+			
+			String sql = 
+				" insert" + 
+				"   into board" + 
+				" values (null, ?, ?, ?, ?, ?, ?, now(), ?)";
+			pstmt = conn.prepareStatement(sql);
+		
+			
+			
+			pstmt.setString(1, vo.getTitle());
+			pstmt.setString(2, vo.getContent());
+			pstmt.setLong(3,vo.getGroup_no());
+			pstmt.setLong(4, vo.getOrder_no());
+			pstmt.setLong(5, vo.getDepth());
+			pstmt.setLong(6, vo.getHit());
+			pstmt.setLong(7, vo.getUser_no());
+			
+			
+			
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if( pstmt != null ) {
+					pstmt.close();
+				}
+				if( conn != null ) {
+					conn.close();
+				}
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}

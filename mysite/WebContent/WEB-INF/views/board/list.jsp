@@ -36,8 +36,10 @@
 					<input type ="hidden" name ="no" value = "${sessionScope.authUser.no }"/>
 					<tr>
 						<td>${vo.no}</td>
-						<td  style = "text-align:left; paddig-left:${20*0}">
-						<!-- <img src = "/mysite/assets/images/reply.png"/> -->
+						<td  style = "text-align:left; padding-left:${20*vo.depth}px">
+						<c:if test = '${vo.depth gt 1 }' >
+						 <img src = "/mysite/assets/images/reply.png"/> 
+						 </c:if>
 						<a href="/mysite/board?a=view&no=${vo.no}&pg=${requestScope.pg}">${vo.title}</a></td>
 						<td>${vo.user_name }</td>
 						<td>${vo.hit}</td>
@@ -50,18 +52,18 @@
 					</tr>
 						</c:forEach>
 						
-					<!-- 페이징 -->	
+					<!-- 페이징	-->
 					<tr>
 						<td colspan ="6" align = "center">
 							<c:if test="${requestScope.startPage > 3 }">
 							[<a id = "paging" href = "/mysite/board?pg=${requestScope.startPage -1}">이전</a>]	
 							</c:if>	
 						<c:forEach var="i" begin="${startPage }" end="${endPage }" step="1">
-							<c:if test="${i==pg }">
+							<c:if test="${i eq pg }">
 								[<a id="currentPaging" href="/mysite/board?pg=${i}">${i}</a>]
 							</c:if>
 							
-							<c:if test="${i!=pg }">
+							<c:if test="${i ne pg }">
 								[<a id="paging" href="/mysite/board?pg=${i}">${i}</a>]
 							</c:if>
 							</c:forEach>
@@ -70,7 +72,7 @@
 								href="/mysite/board?pg=${requestScope.endPage+1 }">다음</a>]
 							</c:if>
 					</td>
-				</tr>
+				</tr> 
 
 				</table>
 			

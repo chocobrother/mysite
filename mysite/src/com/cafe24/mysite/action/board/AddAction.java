@@ -37,11 +37,13 @@ public class AddAction implements Action {
 		BoardDao dao = new BoardDao();
 		
 	
+		Long group_no = (long) dao.maxGroupNo();
+		
 		vo.setTitle(title);
 		vo.setContent(content);
-		vo.setGroup_no("1");
-		vo.setDepth("0");
-		vo.setOrder_no("1");
+		vo.setGroup_no(++group_no);
+		vo.setDepth((long) 1);
+		vo.setOrder_no((long) 1);
 		vo.setHit((long) 1);
 		vo.setUser_no(user_no1);
 		

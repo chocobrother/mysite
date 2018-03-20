@@ -18,32 +18,31 @@ public class ListAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-		
+//		
 		String pg1 = request.getParameter("pg");
-		
+//		
 		if(pg1 == null) {
 			pg1 = "1";
 		}
 		
-		int pg = Integer.parseInt(pg1);
+		int pg = Integer.parseInt(pg1); //limit pg , 5 
 		
 
-		System.out.println("pg : " + pg);
+
 				
 		BoardDao dao = new BoardDao();
 		
 		List<BoardVo> list = dao.getList(pg);
+//		List<BoardVo> list = dao.getList();
+		
+		int totalA = dao.getTotalA(); // 게시글 총 갯수 
 		
 		
-		int totalA = dao.getTotalA();
-		
-		System.out.println("total count + :" + totalA);
-		
-		int totalP = (totalA+2) /3;
-
-		int startPage = (pg-1)/3*3+1;
-		int endPage = startPage + 2;
-		
+		int totalP = (totalA+2) /3; //총페이지
+//
+		int startPage = (pg-1)/3*3+1; //시작번호
+		int endPage = startPage + 2; //끝번호 
+//		
 		if(totalP < endPage) endPage = totalP;
 		
 		

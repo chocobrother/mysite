@@ -15,8 +15,12 @@
 		<div id="content">
 			<div id="board">
 				<form class="board-form" method="post" action="/mysite/board">
-				 	<input type = "hidden" name = "a" value="list"> 
+				 	<input type = "hidden" name = "a" value="reply"> 
 					<input type ="hidden" name ="no" value = "${sessionScope.authUser.no}"/>
+					<input type ="hidden" name ="groupNo" value = "${requestScope.groupNo}"/>
+					<input type ="hidden" name ="orderNo" value = "${requestScope.orderNo}"/>
+					<input type ="hidden" name ="user_no" value = "${requestScope.user_no}"/>
+					<input type ="hidden" name ="depth" value = "${requestScope.depth}"/>
 					<table class="tbl-ex">
 						<tr>
 							<th colspan="2">답글달기</th>

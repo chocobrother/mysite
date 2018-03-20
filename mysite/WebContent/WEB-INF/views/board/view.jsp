@@ -40,8 +40,9 @@
 					
 				<c:if test = "${not empty authUser && sessionScope.authUser.no == vo.user_no}">
 					<a href="/mysite/board?a=modifyform&no=${vo.no}">글수정</a>
+					<a href="/mysite/board?a=replyform&no=${vo.no}&groupNo=${vo.group_no}
+					&orderNo=${vo.order_no}&depth=${vo.depth}&user_no=${vo.user_no}">답글달기</a>
 				</c:if>
-					<a href="/mysite/board?a=reply&no=${vo.no}">답글달기</a>
 				</div>
 				</c:forEach>
 			</div>

@@ -39,6 +39,11 @@ public class BoardActionFactory extends AbstractActionFactory {
 			action = new ReplyAction();
 			
 		}
+		else if ("replyform".equals(actionName)) {
+			
+			action = new ReplyActionForm();
+			
+		}
 		else {
 		    action = new ListAction();
 		    

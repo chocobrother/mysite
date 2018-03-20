@@ -5,9 +5,9 @@ public class BoardVo {
 	private Long no;
 	private String title;
 	private String content;
-	private String group_no;
-	private String order_no;
-	private String depth;
+	private Long group_no;
+	private Long order_no;
+	private Long depth;
 	private Long hit;
 	private String write_date;
 	private String user_name;
@@ -53,22 +53,22 @@ public class BoardVo {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getGroup_no() {
+	public Long getGroup_no() {
 		return group_no;
 	}
-	public void setGroup_no(String group_no) {
+	public void setGroup_no(Long group_no) {
 		this.group_no = group_no;
 	}
-	public String getOrder_no() {
+	public Long getOrder_no() {
 		return order_no;
 	}
-	public void setOrder_no(String order_no) {
+	public void setOrder_no(Long order_no) {
 		this.order_no = order_no;
 	}
-	public String getDepth() {
+	public Long getDepth() {
 		return depth;
 	}
-	public void setDepth(String depth) {
+	public void setDepth(Long depth) {
 		this.depth = depth;
 	}
 	public Long getUser_no() {
